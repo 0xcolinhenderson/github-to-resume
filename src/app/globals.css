@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: rgb(22, 22, 22);
+  --secondary-color: #ffffff;
+  --text-color: #ffffff;
+  --input-bg: #ffffff;
+  --highlight: #0073ff;
+  --icons: #7b7a7a;
+  --button-text: #ffffff;
+  --focus-border-color: #ff0000;
+
+  --border-color: #32a718;
+  --input-border-color: #8b8b8b;
+  
+  --input-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --button-shadow: 0 2px 6px rgba(30, 30, 30, 0.5); 
+}
+html, body {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
