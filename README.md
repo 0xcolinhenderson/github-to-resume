@@ -1,5 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+RepoToResume
 
+A web application that fetches GitHub repositories using the GitHub API, extracts key information, and formats it into a professional resume card using the Gemini API. Users can choose between a standard format or LaTeX output.
+
+Features
+
+Fetch GitHub Repositories: Uses GitHub API to retrieve public repositories of a user.
+
+Extract Key Information: Parses relevant details like repository name, description, technologies used, and contributions.
+
+Format Resume Card: Utilizes the Gemini API to format extracted details into a professional resume.
+
+Multiple Output Formats: Supports standard resume formatting and LaTeX output.
+
+Modern UI: Built with Next.js, Tailwind CSS, and React for a sleek and responsive design.
+
+Deployment on Vercel: Hosted on Vercel for seamless performance and scalability.
+
+Tech Stack
+
+Frontend: Next.js, React, Tailwind CSS
+
+Backend/API: GitHub API, Gemini API
+
+Hosting: Vercel
+
+Getting Started
 ## Getting Started
 
 First, run the development server:
