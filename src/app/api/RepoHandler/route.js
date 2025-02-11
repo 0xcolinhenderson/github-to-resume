@@ -2,7 +2,7 @@ export async function POST(request) {
   try {
     const { repoUrl } = await request.json();
 
-    const regex = /^https:\/\/github\.com\/([^/]+)\/([^/]+)$/;
+    const regex = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/?$/;
     const match = repoUrl.match(regex);
 
     if (!match) {
