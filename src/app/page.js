@@ -34,10 +34,16 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
+    
+    if(!repoUrl.includes("github.com")){
+      setError("Please enter a github link!");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setSuccess(false);
-  
+
     try {
       const repoResponse = await fetch("/api/RepoHandler", {
         method: "POST",
@@ -111,7 +117,7 @@ export default function Home() {
   return (
     <div className="relative w-full min-h-screen">
       <div className="absolute top-0 left-0 w-full h-full bg-[var(--primary-color)]"></div>
-      <div className="absolute top-[40vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-[var(--text-color)]">
+      <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-[var(--text-color)] top-[30vh] sm:top-[40vh]">
         <h1 className="text-5xl font-bold">RepoToResume</h1>
         <p className="text-lg text-center max-w-3xl mx-auto mt-2 pb-10 opacity-90">
           Quickly create an automated project card based on a public GitHub repository.
@@ -148,7 +154,7 @@ export default function Home() {
             </svg>
           </div>
 
-          <div className="rounded-md pr-4 flex">
+        <div className="rounded-md pr-4 flex">
           <select
             value={items}
             onChange={handleItemChange}
