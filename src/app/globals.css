@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: rgb(22, 22, 22);
+  --primary-color: rgb(255, 255, 255);
   --secondary-color: #ffffff;
-  --text-color: #ffffff;
+  --text-color: #4f4f4f;
   --input-bg: #ffffff;
   --highlight: #0073ff;
   --icons: #7b7a7a;
@@ -15,7 +15,7 @@
   --border-color: #32a718;
   --input-border-color: #8b8b8b;
   
-  --input-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --input-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   --button-shadow: 0 2px 6px rgba(30, 30, 30, 0.5); 
 }
 html, body {

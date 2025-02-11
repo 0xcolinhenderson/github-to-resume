@@ -61,15 +61,22 @@ export async function POST(request) {
 
     Generate ${items} resume-style bullet points describing this project.
     Use optional numbers (percentages or regular numbers) when relavent (talking about metrics).
-    Bullet points should be detailed, professional, and articulate (although they should be one sentence each).
+    Bullet points should be detailed, professional, and articulate (they should be around one long sentence each).
     They should focus on features & technologies that are relavent, but not go too deep into the exact specification of the code.
     If you do not have enough information about the project, feel free to make minor assumptions about the project (if necessary)
-    Avoid including vague or unnecessary details about project, or insignifacnt things such as minor libraries/utility or components.
+    Avoid including vague or unnecessary details about project, or insignifacnt things such as minor utility or components.
 
     You will not bold or italicize anything.
     List bullet points with "-".
 
     You will then write the exact same thing, but in LaTeX in the format specified below.
+
+    An example of a bullet point you might generate could look something like this. DO NOT COPY THESE
+
+    Developed an innovative _ application that utilizes _ to _, providing  _ using _ , obtaining an accuracy of _%
+    Engineered _ that provides personalized _ for different _, resulting in a _% increase in _ and an overall satisfaction rate of _ from beta testers
+    Integrated intuitive UI utilizing _, allowing for seamless transitions between _ and _.
+
 
     Format it in this style:
     NORMAL:

@@ -16,7 +16,8 @@
     "next": "15.1.6",
     "prismjs": "^1.29.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.8",
