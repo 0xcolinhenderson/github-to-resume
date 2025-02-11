@@ -16,8 +16,8 @@ export default function RootLayout({ children }) {
   return (
         <html lang="en">
           <body className={`${inter.variable} antialiased`}>
-
-              {children}
+            <link rel="icon" type="image/png" href="/favicon.png"/>
+            {children}
           </body>
         </html>
   );
