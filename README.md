@@ -2,6 +2,7 @@
 
 A web app that fetches GitHub repositories using the GitHub API, extracts key information, and formats it into a professional resume card using Google's Gemini API. 
 Users can choose between a standard format or LaTeX output.
+
 ![repotoresume](https://github.com/user-attachments/assets/c70534e9-92a7-4972-8760-8b337aa33052)
 
 Tech Stack
