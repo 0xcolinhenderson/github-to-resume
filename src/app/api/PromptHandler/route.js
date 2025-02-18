@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI("AIzaSyD1z08FY3VRI9Sp3xpicZWrjsOOsqmjwyQ");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
 export async function POST(request) {
   const formatDate = (dateString) => {
@@ -14,11 +17,26 @@ export async function POST(request) {
     return currentDate.toLocaleString("en-US", { month: "long", year: "numeric" });
   };
 
+  const parseResponse = (response) => {
+    const normalRegex = /NORMAL:\s([\s\S]+?)\s*LaTeX:/;
+    const latexRegex = /LaTeX:\s([\s\S]+)/;
+
+    const normalMatch = response.match(normalRegex);
+    const latexMatch = response.match(latexRegex);
+
+    return {
+      normalText: normalMatch ? normalMatch[1].trim() : '',
+      latexText: latexMatch ? latexMatch[1].trim() : '',
+    };
+  };
+
   try {
     const requestBody = await request.json();
+    console.log("Received requestBody:", requestBody);
 
     const { resumeData, items } = requestBody;
     if (!resumeData) {
+      console.error("resumeData is missing");
       return new Response(JSON.stringify({ message: "resumeData is missing" }), { status: 400 });
     }
 
@@ -27,8 +45,6 @@ export async function POST(request) {
     const {
       name,
       description,
-      stars,
-      forks,
       created_at,
       updated_at,
       languages,
@@ -60,11 +76,11 @@ export async function POST(request) {
     ${formattedFiles || "No relevant code samples available"}
 
     Generate ${items} resume-style bullet points describing this project.
-    Use optional numbers (percentages or regular numbers) when relavent (talking about metrics).
+    Use optional numbers (percentages or regular numbers) when relevant (talking about metrics).
     Bullet points should be detailed, professional, and articulate (they should be around one long sentence each).
-    They should focus on features & technologies that are relavent, but not go too deep into the exact specification of the code.
+    They should focus on features & technologies that are relevant, but not go too deep into the exact specification of the code.
     If you do not have enough information about the project, feel free to make minor assumptions about the project (if necessary)
-    Avoid including vague or unnecessary details about project, or insignifacnt things such as minor utility or components.
+    Avoid including vague or unnecessary details about the project, or insignificant things such as minor utility or components.
 
     You will not bold or italicize anything.
     List bullet points with "-".
@@ -77,11 +93,10 @@ export async function POST(request) {
     Engineered _ that provides personalized _ for different _, resulting in a _% increase in _ and an overall satisfaction rate of _ from beta testers
     Integrated intuitive UI utilizing _, allowing for seamless transitions between _ and _.
 
-
     Format it in this style:
     NORMAL:
     [Project Name] | [Languages, Frameworks]
-    [Start Month (abreviated if necessary)] - [Last Updated Month (or "Current" if is current month)]
+    [Start Month (abbreviated if necessary)] - [Last Updated Month (or "Current" if is current month)]
     [Bullet points]
 
     LaTeX:
@@ -90,16 +105,22 @@ export async function POST(request) {
     [Bullet points]
     `;
 
-    const geminiResponse = await model.generateContent(prompt);
-    const formattedDescription = geminiResponse.response.text() || "Failed to generate a description.";
+    console.log("Generated prompt:", prompt);
 
-    return new Response(
-      JSON.stringify({ resumeEntry: formattedDescription }),
-      { status: 200 }
-    );
+    const geminiResponse = await model.generateContent(prompt);
+    console.log("Received geminiResponse:", geminiResponse);
+
+    if (!geminiResponse) {
+      throw new Error("Failed to generate resume content");
+    }
+
+    const { normalText, latexText } = parseResponse(geminiResponse.resumeEntry);
+
+    return new Response(JSON.stringify({ normalText, latexText }), { status: 200 });
   } catch (error) {
+    console.error("Error occurred:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to generate project resume entry" }),
+      JSON.stringify({ message: "Failed to generate project resume entry", error: error.message }),
       { status: 500 }
     );
   }

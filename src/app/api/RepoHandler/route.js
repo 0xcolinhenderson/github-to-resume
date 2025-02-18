@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 export async function POST(request) {
   try {
     const { repoUrl } = await request.json();
@@ -14,10 +17,24 @@ export async function POST(request) {
     const owner = match[1];
     const repo = match[2];
 
-    const repoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    const fetchRepoData = async (owner, repo) => {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: {
+          Authorization: `token ${process.env.GITHUB_API_TOKEN}`,
+        },
+      });
+      return response.json();
+    };
+
+    const repoResponse = await fetchRepoData(owner, repo);
+    console.log("GitHub API response status:", repoResponse.status);
+
     if (!repoResponse.ok) {
-      return new Response(JSON.stringify({ message: "Repository not found" }), { status: 400 });
+      const errorText = await repoResponse.text();
+      console.error("Failed to fetch repo from GitHub:", repoResponse.status, repoResponse.statusText, errorText);
+      return new Response(JSON.stringify({ message: "Failure to fetch repo from GitHub" }), { status: 400 });
     }
+
     const repoData = await repoResponse.json();
 
     if (repoData.private) {
@@ -26,7 +43,7 @@ export async function POST(request) {
       });
     }
 
-    const languagesResponse = await fetch(repoData.languages_url);
+    const languagesResponse = await fetch(repoData.languages_url, { headers });
     const languages = languagesResponse.ok ? await languagesResponse.json() : {};
 
     const codeKeywords = [
@@ -51,7 +68,7 @@ export async function POST(request) {
     const fetchFiles = async (path = '') => {
       if (resumeData.files.length >= 50) return;
     
-      const filesResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+      const filesResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { headers });
       const files = await filesResponse.json();
     
       for (const file of files) {
@@ -59,7 +76,7 @@ export async function POST(request) {
           const fileName = file.name.toLowerCase();
     
           if (isRelevantFile(fileName)) {
-            const fileContentResponse = await fetch(file.download_url);
+            const fileContentResponse = await fetch(file.download_url, { headers });
             if (fileContentResponse.ok) {
               const fileContent = await fileContentResponse.text();
               const first200Lines = fileContent.split("\n").slice(0, 200).join("\n");
@@ -76,15 +93,12 @@ export async function POST(request) {
         if (resumeData.files.length >= 50) break;
       }
     };
-    
 
     const resumeData = {
       name: repoData.name,
       created_at: repoData.created_at,
       updated_at: repoData.updated_at,
       description: repoData.description || 'No description provided',
-      stars: repoData.stargazers_count,
-      forks: repoData.forks_count,
       owner: {
         username: repoData.owner.login,
         avatar_url: repoData.owner.avatar_url,
@@ -95,7 +109,6 @@ export async function POST(request) {
     };
     
     await fetchFiles();
-
 
     return new Response(JSON.stringify({
       message: "Repository is valid",
