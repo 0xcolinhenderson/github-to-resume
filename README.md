@@ -29,4 +29,4 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Configure .env file with  your api keys. 
+Configure .env file with a GOOGLE_GENERATIVE_AI_KEY.
