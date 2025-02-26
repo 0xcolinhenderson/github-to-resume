@@ -2,7 +2,9 @@ import { Octokit } from "@octokit/rest";
 import dotenv from 'dotenv';
 dotenv.config();
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+  auth: process.env.GITHUB_API_TOKEN,
+});
 
 const getImportantFiles = (files) => {
   const importantKeywords = ["main", "index", "app", "server", "api", "router", "controller", "service"];
@@ -40,6 +42,11 @@ const fetchAllFiles = async (owner, repo, path = "") => {
   return files;
 };
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-US", { month: "short", year: "numeric" });
+};
+
 export async function POST(request) {
   try {
     const { repoUrl } = await request.json();
@@ -63,8 +70,8 @@ export async function POST(request) {
       name: repoData.name,
       description: repoData.description,
       languages: Object.keys(languages).join(", "),
-      created_at: repoData.created_at,
-      updated_at: repoData.updated_at,
+      created_at: formatDate(repoData.created_at),
+      updated_at: formatDate(repoData.updated_at),
       files: fileContents,
     };
 

@@ -91,12 +91,12 @@ export async function POST(request) {
     Format it in this style (DO NOT BOLD OR ITALICIZE ANYTHING):
     NORMAL:
     [Project Name] | [Languages, Frameworks]
-    [Start Month (abbreviated if necessary)] - [Last Updated Month (or "Current" if is current month)]
+    [Start Month (abbreviated) + Year] - [Last Updated Month (abbreviated) + Year]
     [Bullet points]
 
     LaTeX:
     [Project Name] | [Languages, Frameworks]
-    [Start Month] - [Last Updated Month]
+    [Start Month (abbreviated) + Year] - [Last Updated Month (abbreviated) + Year]
     [Bullet points]
     `;
 
