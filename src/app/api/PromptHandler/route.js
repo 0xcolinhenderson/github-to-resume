@@ -12,17 +12,14 @@ export async function POST(request) {
     return date.toLocaleString("en-US", { month: "long", year: "numeric" });
   };
 
-  const getCurrentMonth = () => {
-    const currentDate = new Date();
-    return currentDate.toLocaleString("en-US", { month: "long", year: "numeric" });
-  };
-
   const parseResponse = (response) => {
+    const cleanedResponse = response.replace(/\*/g, '');
+
     const normalRegex = /NORMAL:\s([\s\S]+?)\s*LaTeX:/;
     const latexRegex = /LaTeX:\s([\s\S]+)/;
 
-    const normalMatch = response.match(normalRegex);
-    const latexMatch = response.match(latexRegex);
+    const normalMatch = cleanedResponse.match(normalRegex);
+    const latexMatch = cleanedResponse.match(latexRegex);
 
     return {
       normalText: normalMatch ? normalMatch[1].trim() : '',
@@ -32,15 +29,12 @@ export async function POST(request) {
 
   try {
     const requestBody = await request.json();
-    console.log("Received requestBody:", requestBody);
 
     const { resumeData, items } = requestBody;
     if (!resumeData) {
       console.error("resumeData is missing");
       return new Response(JSON.stringify({ message: "resumeData is missing" }), { status: 400 });
     }
-
-    const currentMonth = getCurrentMonth();
 
     const {
       name,
@@ -70,7 +64,6 @@ export async function POST(request) {
     Languages: ${languages}
     Created at: ${startMonth}
     Last Updated: ${lastUpdatedMonth}
-    Current Month: ${currentMonth}
 
     Code Samples:
     ${formattedFiles || "No relevant code samples available"}
@@ -93,7 +86,9 @@ export async function POST(request) {
     Engineered _ that provides personalized _ for different _, resulting in a _% increase in _ and an overall satisfaction rate of _ from beta testers
     Integrated intuitive UI utilizing _, allowing for seamless transitions between _ and _.
 
-    Format it in this style:
+      The LaTeX part should be formatted to be used in a LaTeX document.
+
+    Format it in this style (DO NOT BOLD OR ITALICIZE ANYTHING):
     NORMAL:
     [Project Name] | [Languages, Frameworks]
     [Start Month (abbreviated if necessary)] - [Last Updated Month (or "Current" if is current month)]
@@ -105,16 +100,15 @@ export async function POST(request) {
     [Bullet points]
     `;
 
-    console.log("Generated prompt:", prompt);
 
     const geminiResponse = await model.generateContent(prompt);
-    console.log("Received geminiResponse:", geminiResponse);
 
-    if (!geminiResponse) {
+    if (!geminiResponse || !geminiResponse.response || !geminiResponse.response.candidates || !geminiResponse.response.candidates[0]) {
       throw new Error("Failed to generate resume content");
     }
 
-    const { normalText, latexText } = parseResponse(geminiResponse.resumeEntry);
+    const geminiText = geminiResponse.response.text();
+    const { normalText, latexText } = parseResponse(geminiText);
 
     return new Response(JSON.stringify({ normalText, latexText }), { status: 200 });
   } catch (error) {

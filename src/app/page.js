@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Prism from "prismjs";
 import "prismjs/themes/prism.css";
@@ -8,7 +8,7 @@ import "prismjs/components/prism-latex.min.js";
 
 const renderLatexText = (latexText) => (
   <pre className="language-latex p-4 bg-gray-800 text-white rounded-md">
-    <code dangerouslySetInnerHTML={{ __html: Prism.highlight(latexText, Prism.languages.latex, 'latex') }} />
+    <code className="language-latex">{latexText}</code>
   </pre>
 );
 
@@ -26,6 +26,10 @@ export default function Home() {
   const [latexText, setLatexText] = useState("");
   const [activeTab, setActiveTab] = useState("normal");
   const [items, setItems] = useState(4);
+
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [latexText]);
 
   const handleFocus = () => setIsClicked(true);
   const handleBlur = () => setIsClicked(false);
@@ -53,16 +57,25 @@ export default function Home() {
 
       const repoResult = await repoResponse.json();
 
-      if (!repoResponse.ok || !repoResult.success) {
+      if (!repoResponse.ok) {
         throw new Error(repoResult.message || "Failed to fetch repository");
       }
+
+      const resumeData = {
+        name: repoResult.name,
+        description: repoResult.description,
+        created_at: repoResult.created_at,
+        updated_at: repoResult.updated_at,
+        languages: repoResult.languages,
+        files: repoResult.files,
+      };
 
       const geminiResponse = await fetch("/api/PromptHandler", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ resumeData: repoResult.resumeData, items }),
+        body: JSON.stringify({ resumeData, items }),
       });
 
       const geminiResult = await geminiResponse.json();
@@ -82,8 +95,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative w-full bg-[var(--primary-color)]">
-
+    <div className= "w-full">
       <div className="text-center text-[var(--text-color)] mt-[30vh]">
         <h1 className="text-5xl font-bold">RepoToResume</h1>
         <p className="text-lg text-center max-w-4xl mx-auto mt-2 opacity-90">
@@ -186,7 +198,7 @@ export default function Home() {
             >
               ✕
             </button>
-            <h3 className="text-xl text-[var(--highlight)] text-center mt-4 pb-2">Generated Resume</h3>
+            <h3 className="text-xl text-[var(--highlight)] text-center mt-4 pb-2">Your Resume Card</h3>
             <div className="flex-1 p-4 border rounded-lg overflow-auto">
               <div>
                 <div className="flex gap-4 mb-4">
@@ -241,7 +253,7 @@ export default function Home() {
       )}
 
       {error && (
-        <div className="flex items-center justify-center w-full">
+        <div className="z-50 flex items-center justify-center w-full">
           <div className="bg-red-500 text-center text-white mt-4 p-3 rounded-lg border border-red-200">
             {error}
           </div>
