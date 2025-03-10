@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata = {
   title: "RepoToResume",
-  description: "RepoToResume v1.0 - Quickly create an automated project card based on a public GitHub repository!",
+  description: "RepoToResume v1.1 - Quickly create an automated project card based on a public GitHub repository!",
 };
 
 export default function RootLayout({ children }) {

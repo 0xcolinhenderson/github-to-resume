@@ -6,6 +6,8 @@ import Prism from "prismjs";
 import "prismjs/themes/prism.css";
 import "prismjs/components/prism-latex.min.js";
 
+import Navbar from './components/Navbar';
+
 const renderLatexText = (latexText) => (
   <pre className="language-latex p-4 bg-gray-800 text-white rounded-md">
     <code className="language-latex">{latexText}</code>
@@ -17,6 +19,7 @@ const copyText = (text) => {
 };
 
 export default function Home() {
+
   const [isClicked, setIsClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,6 +36,7 @@ export default function Home() {
 
   const handleFocus = () => setIsClicked(true);
   const handleBlur = () => setIsClicked(false);
+
   const handleChange = (e) => setRepoUrl(e.target.value);
   const handleItemChange = (e) => setItems(Number(e.target.value));
 
@@ -96,6 +100,7 @@ export default function Home() {
 
   return (
     <div className= "w-full">
+      <Navbar />
       <div className="text-center text-[var(--text-color)] mt-[30vh]">
         <h1 className="text-5xl font-bold">RepoToResume</h1>
         <p className="text-lg text-center max-w-4xl mx-auto mt-2 opacity-90">
